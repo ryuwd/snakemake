@@ -135,14 +135,15 @@ class XRootDHelper(object):
 
     def exists(self, url):
         domain, dirname, filename = self._parse_url(url)
-        status, dirlist = self.get_client(domain).dirlist(dirname)
+        path = os.path.join(dirname, filename)
+        status, dirlist = self.get_client(domain).stat(path)
         if not status.ok:
             if status.errno == 3011:
                 return False
             else:
                 raise XRootDFileException(
-                    "Error listing directory "
-                    + dirname
+                    "Could not stat "
+                    + path
                     + " on domain "
                     + domain
                     + "\n"
@@ -150,7 +151,7 @@ class XRootDHelper(object):
                     + "\n"
                     + repr(dirlist)
                 )
-        return filename in [f.name for f in dirlist.dirlist]
+        return status.ok
 
     def _get_statinfo(self, url):
         domain, dirname, filename = self._parse_url(url)
