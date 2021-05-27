@@ -66,13 +66,15 @@ class RemoteProvider(AbstractRemoteProvider):
 class RemoteObject(AbstractRemoteObject):
     mtime_re = re.compile(r"^\s*ModificationDate : (.+)$", flags=re.MULTILINE)
     size_re = re.compile(r"^\s*Size : ([0-9]+).*$", flags=re.MULTILINE)
-    defaultSE = "CERN-USER"
     diracEnvWrapper = DIRAC_ENV_WRAPPER
 
-    def __init__(self, *args, keep_local=False, provider=None, **kwargs):
+    def __init__(
+        self, *args, keep_local=False, provider=None, defaultSE="CERN-USER", **kwargs
+    ):
         super(RemoteObject, self).__init__(
             *args, keep_local=keep_local, provider=provider, **kwargs
         )
+        self.defaultSE = defaultSE
 
     def _dirac(self, cmd, *args, retry=None, raise_workflow_error=True):
         if retry is None:
@@ -127,7 +129,6 @@ class RemoteObject(AbstractRemoteObject):
     def exists(self):
         # dirac-dms-lfn-metadata [LFN]
         result = self._lfn_metadata()
-        # exit code 0 means that the file is present
         return "Failed :" not in result and "Successful :" in result
 
     def mtime(self):
@@ -211,9 +212,10 @@ class RemoteObject(AbstractRemoteObject):
                     e.stderr.decode()
                 )
             )
-        assert "Successfully uploaded" in result, "Dirac file upload failed."
+        success = "Successfully uploaded" in result
+        assert success, "Dirac file upload failed."
 
-        return "Successfully uploaded" in result
+        return success
 
     @property
     def list(self):
