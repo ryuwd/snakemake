@@ -88,7 +88,9 @@ class RemoteObject(AbstractRemoteObject):
                 if i == retry:
                     if raise_workflow_error:
                         raise WorkflowError(
-                            "Error calling gfal-{}:\n{}".format(cmd, e.stderr.decode())
+                            "Error calling {}:\n{}".format(
+                                " ".join(cmd), e.stderr.decode()
+                            )
                         )
                     else:
                         raise e
