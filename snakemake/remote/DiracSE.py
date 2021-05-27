@@ -143,7 +143,8 @@ class RemoteObject(AbstractRemoteObject):
     def download(self):
         # dirac-dms-get-file -D [local directory] [LFN]
 
-        # if "Downloading file",
+        # if "Downloading file" in output, this doesn't mean the file exists,
+        # unfortunately, it also doesn't mean the file is downloading.
         # if "Successful" not in output, the file does not exist
         # if "Failed" in output, the file does not exist or something went
         # wrong.
