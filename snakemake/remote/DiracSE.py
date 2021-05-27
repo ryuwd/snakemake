@@ -125,7 +125,7 @@ class RemoteObject(AbstractRemoteObject):
         # dirac-dms-lfn-metadata [LFN]
         result = self._lfn_metadata()
         # exit code 0 means that the file is present
-        return "Failed :" not in result
+        return "Failed :" not in result and "Successful :" in result
 
     def mtime(self):
         # assert self.exists()
