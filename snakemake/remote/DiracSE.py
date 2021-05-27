@@ -74,29 +74,6 @@ class RemoteObject(AbstractRemoteObject):
             *args, keep_local=keep_local, provider=provider, **kwargs
         )
 
-    def _gfal(self, cmd, *args, retry=None, raise_workflow_error=True):
-        if retry is None:
-            retry = self.provider.retry
-        _cmd = ["gfal-" + cmd] + list(args)
-        for i in range(retry + 1):
-            try:
-                logger.debug(_cmd)
-                return sp.run(
-                    _cmd, check=True, stderr=sp.PIPE, stdout=sp.PIPE
-                ).stdout.decode()
-            except sp.CalledProcessError as e:
-                if i == retry:
-                    if raise_workflow_error:
-                        raise WorkflowError(
-                            "Error calling gfal-{}:\n{}".format(cmd, e.stderr.decode())
-                        )
-                    else:
-                        raise e
-                else:
-                    # try again after some seconds
-                    time.sleep(1)
-                    continue
-
     def _dirac(self, cmd, *args, retry=None, raise_workflow_error=True):
         if retry is None:
             retry = self.provider.retry
