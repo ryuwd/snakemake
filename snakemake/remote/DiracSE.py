@@ -152,6 +152,9 @@ class RemoteObject(AbstractRemoteObject):
         # and the path actually exists on disk, then we are good to go.
         lfn = self._lfn()
         path = self.local_file()
+        if path.startswith("/"):
+            path = path[1:]  # remove leading slash
+
         directory = os.path.dirname(path)
         try:
             result = self._dirac(
@@ -191,8 +194,11 @@ class RemoteObject(AbstractRemoteObject):
 
     def upload(self):
         # dirac-dms-add-file [LFN] [LocalPath] [defaultSE = CERN-USER]
+        path = self.local_file()
+        if path.startswith("/"):
+            path = path[1:]  # remove leading slash
 
-        source = os.path.abspath(self.local_file())
+        source = os.path.abspath(path)
 
         try:
             result = self._dirac(
