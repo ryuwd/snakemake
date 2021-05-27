@@ -32,7 +32,7 @@ elif not shutil.which("dirac-dms-lfn-metadata"):
 class RemoteProvider(AbstractRemoteProvider):
 
     supports_default = True
-    allows_directories = True
+    allows_directories = False
 
     def __init__(
         self,
@@ -208,9 +208,9 @@ class RemoteObject(AbstractRemoteObject):
                     e.stderr.decode()
                 )
             )
-        assert "Successful : " in result, "Dirac file upload failed."
+        assert "Successfully uploaded" in result, "Dirac file upload failed."
 
-        return "Successful : " in result
+        return "Successfully uploaded" in result
 
     @property
     def list(self):
