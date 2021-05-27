@@ -101,7 +101,10 @@ class RemoteObject(AbstractRemoteObject):
 
     def _lfn(self):
         path = self.remote_file()
-        return path.replace("LFN://", "")  # FIXME!
+        path = path.replace("LFN://", "")
+        if not path.startswith("/"):
+            path = "/" + path
+        return path
 
     def _lfn_metadata(self):
         try:
@@ -152,9 +155,6 @@ class RemoteObject(AbstractRemoteObject):
         # and the path actually exists on disk, then we are good to go.
         lfn = self._lfn()
         path = self.local_file()
-        if path.startswith("/"):
-            path = path[1:]  # remove leading slash
-
         directory = os.path.dirname(path)
         try:
             result = self._dirac(
@@ -195,9 +195,6 @@ class RemoteObject(AbstractRemoteObject):
     def upload(self):
         # dirac-dms-add-file [LFN] [LocalPath] [defaultSE = CERN-USER]
         path = self.local_file()
-        if path.startswith("/"):
-            path = path[1:]  # remove leading slash
-
         source = os.path.abspath(path)
 
         try:
